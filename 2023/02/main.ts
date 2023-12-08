@@ -22,8 +22,7 @@ function getFormattedGames(inputArray: Array<string>): Map<number, Array<Map<str
 }
 
 function checkIfGameisPossible(game: Array<Map<string, string>>): boolean {
-	const gameCopy = Array.from(game);
-	return gameCopy.every((value: Map<string, string>) => {
+	return game.every((value: Map<string, string>) => {
 		for (const color in part1LoadedDice) {
 			if (value.has(color) && parseInt(value.get(color)!) > part1LoadedDice[color]) {
 				return false;
