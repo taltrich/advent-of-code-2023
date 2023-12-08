@@ -1,6 +1,4 @@
-export function getInput(): string {
-	return Deno.readTextFileSync('input.txt');
-}
+import { getInput } from '../../utils.ts';
 
 export function checkAndParseNumberString(stringifiedNumber: string): string {
 	if (stringifiedNumber in parsedStringNumber) {
