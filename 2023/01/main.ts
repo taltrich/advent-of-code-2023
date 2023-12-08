@@ -56,11 +56,14 @@ export function part1(inputArray: Array<string>): void {
 
 export function part2(inputArray: Array<string>): void {
 	const numberArray: Array<number> = [];
-	const regex = new RegExp('\\d|' + Object.keys(parsedStringNumber).join('|'), 'g');
+	const regex = new RegExp('(?=(\\d|' + Object.keys(parsedStringNumber).join('|') + '))', 'g');
 	inputArray.forEach((inputString) => {
-		const numbers: RegExpMatchArray | null = inputString.match(regex);
+		const numbers: IterableIterator<RegExpMatchArray> = inputString.matchAll(regex);
 		if (numbers == null) return true;
-		numberArray.push(getFormattedNumberPart2(numbers));
+		const results = [...numbers].map((matchArray) => {
+			return matchArray[1];
+		});
+		numberArray.push(getFormattedNumberPart2(results));
 	});
 
 	console.log('Part 2: ' + getResult(numberArray));
