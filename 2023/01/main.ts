@@ -2,25 +2,15 @@ export function getInput(): string {
 	return Deno.readTextFileSync('input.txt');
 }
 
-export function getFormattedNumberPart1(numberArray: Array<string>): number {
-	let finishedNumber = 0;
-	if (numberArray.length > 1) {
-		finishedNumber = +(numberArray[0] + numberArray[numberArray.length - 1]);
-	} else if (numberArray.length === 1) {
-		finishedNumber = +(numberArray[0] + numberArray[0]);
-	}
-
-	return finishedNumber;
-}
-
 export function checkAndParseNumberString(stringifiedNumber: string): string {
 	if (stringifiedNumber in parsedStringNumber) {
 		return parsedStringNumber[stringifiedNumber];
 	}
+
 	return stringifiedNumber;
 }
 
-export function getFormattedNumberPart2(numberArray: Array<string>): number {
+export function getFormattedNumber(numberArray: Array<string>): number {
 	let finishedNumber = 0;
 	if (numberArray.length > 1) {
 		finishedNumber = +(checkAndParseNumberString(numberArray[0]) +
@@ -33,25 +23,16 @@ export function getFormattedNumberPart2(numberArray: Array<string>): number {
 	return finishedNumber;
 }
 
-function getResult(numberArray: Array<number>): number {
-	let result = 0;
-	numberArray.forEach((value) => {
-		result += value;
-	});
-
-	return result;
-}
-
 export function part1(inputArray: Array<string>): void {
 	const numberArray: Array<number> = [];
 
 	inputArray.forEach((inputString) => {
 		const numbers: RegExpMatchArray | null = inputString.match(/\d/g);
 		if (numbers == null) return true;
-		numberArray.push(getFormattedNumberPart1(numbers));
+		numberArray.push(getFormattedNumber(numbers));
 	});
 
-	console.log('Part 1: ' + getResult(numberArray));
+	console.log('Part 1: ' + numberArray.reduce((a, b) => a + b));
 }
 
 export function part2(inputArray: Array<string>): void {
@@ -63,10 +44,10 @@ export function part2(inputArray: Array<string>): void {
 		const results = [...numbers].map((matchArray) => {
 			return matchArray[1];
 		});
-		numberArray.push(getFormattedNumberPart2(results));
+		numberArray.push(getFormattedNumber(results));
 	});
 
-	console.log('Part 2: ' + getResult(numberArray));
+	console.log('Part 2: ' + numberArray.reduce((a, b) => a + b));
 }
 
 const parsedStringNumber: { [key: string]: string } = {
@@ -82,8 +63,7 @@ const parsedStringNumber: { [key: string]: string } = {
 };
 
 if (import.meta.main) {
-	const input: string = getInput();
-	const inputArray: Array<string> = input.split('\n');
+	const inputArray: Array<string> = getInput().split('\n');
 
 	part1(inputArray);
 	part2(inputArray);
