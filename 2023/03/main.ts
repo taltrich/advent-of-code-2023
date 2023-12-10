@@ -1,6 +1,23 @@
 import { getInput } from '../../utils.ts';
 
-function getFilledRows(specialCharPosMap: Map<number, Array<number>>): Map<number, Array<number>> {
+function getFilledRowsBySpecialChars(inputArray: Array<string>): Map<number, Array<number>> {
+	const specialCharPosMap = new Map<number, Array<number>>();
+	inputArray.forEach((value: string, index: number) => {
+		const specialCharPosArray: Array<number> = [];
+		const regex = new RegExp(/[^\d\s.]/, 'g');
+		let match: RegExpExecArray | null = null;
+		while ((match = regex.exec(value)) !== null) {
+			if (match.index > 0) {
+				specialCharPosArray.push(match.index - 1);
+			}
+			specialCharPosArray.push(match.index);
+			if (match.index < value.length - 1) {
+				specialCharPosArray.push(match.index + 1);
+			}
+		}
+		specialCharPosMap.set(index, specialCharPosArray);
+	});
+
 	const filledMap = new Map<number, Array<number>>();
 	specialCharPosMap.forEach(
 		(value: Array<number>, index: number, map: Map<number, Array<number>>) => {
@@ -29,11 +46,10 @@ function getCorrectNumbers(
 		const regex = new RegExp(/\d+/, 'g');
 		const specialCharSelectionForRow: Array<number> = specialCharPosMap.get(index)!;
 		let match: RegExpExecArray | null = null;
-		console.log(index);
 		while ((match = regex.exec(rowString)) !== null) {
 			if (
 				specialCharSelectionForRow.includes(match.index) ||
-				specialCharSelectionForRow.includes(match.index + match[0].length)
+				specialCharSelectionForRow.includes(match.index + match[0].length - 1)
 			) {
 				matchingNumbers.push(parseInt(match[0]));
 			}
@@ -42,27 +58,13 @@ function getCorrectNumbers(
 	return matchingNumbers;
 }
 
-function part1(inputArray: Array<string>): void {
-	const specialCharPosMap = new Map<number, Array<number>>();
-	inputArray.forEach((value: string, index: number) => {
-		const specialCharPosArray: Array<number> = [];
-		const regex = new RegExp(/[^\d\s.]/, 'g');
-		let match: RegExpExecArray | null = null;
-		while ((match = regex.exec(value)) !== null) {
-			if (match.index > 0) {
-				specialCharPosArray.push(match.index - 1);
-			}
-			specialCharPosArray.push(match.index);
-			if (match.index < value.length - 1) {
-				specialCharPosArray.push(match.index + 1);
-			}
-		}
-		specialCharPosMap.set(index, specialCharPosArray);
-	});
-	const specialCharSelectionPosMap = getFilledRows(specialCharPosMap);
+export function part1(inputArray: Array<string>): void {
+	const specialCharSelectionPosMap = getFilledRowsBySpecialChars(inputArray);
 	const correctNumbers = getCorrectNumbers(inputArray, specialCharSelectionPosMap);
 
-	console.log('Part 1: ' + correctNumbers.reduce((a, b) => a + b));
+	const result = correctNumbers.reduce((a, b) => a + b);
+
+	console.log('Part 1: ' + result);
 }
 
 if (import.meta.main) {
